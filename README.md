@@ -98,6 +98,12 @@ GET /api/video/status/:jobId
 **Request Body:**
 - Form data with video file (key: `video`)
 
+```bash
+curl -X POST \
+  'http://localhost:3001/api/video/upload?quality=1000k&format=mp4&resolution=1280x720' \
+  -F 'video=@/path/to/video.mp4'
+```
+
 **Response:**
 
 ```json
