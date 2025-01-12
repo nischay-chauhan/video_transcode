@@ -45,6 +45,20 @@ export interface VideoProcessingOptions {
     preset?: 'ultrafast' | 'superfast' | 'veryfast' | 'faster' | 'fast' | 'medium' | 'slow' | 'slower' | 'veryslow'
     metadata?: Record<string, string>
   }
+  
+  encoding?: {
+    preset?: 'veryslow' | 'slow' | 'medium' | 'fast' | 'veryfast'
+    crf?: number // 0-51, lower means better quality
+    tune?: 'film' | 'animation' | 'grain' | 'stillimage'
+  }
+  
+  hwaccel?: 'auto' | 'cuda' | 'vaapi' | 'qsv'
+  
+  advancedFilters?: {
+    deinterlace?: boolean
+    denoise?: boolean
+    stabilize?: boolean
+  }
 }
 
 export interface VideoProcessingJob {
