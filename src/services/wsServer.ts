@@ -1,7 +1,15 @@
 import { WebSocket, WebSocketServer } from 'ws'
+import { AuthService } from './auth'
+import { UserPayload } from '../types/auth'
 
 interface CustomWebSocket extends WebSocket {
-  jobId?: string
+  jobId?: string;
+  user?: UserPayload;
+  upgradeReq: {
+    headers: {
+      get: (key: string) => string | null;
+    };
+  };
 }
 
 interface WSMessage {
@@ -15,7 +23,7 @@ class VideoProcessingWSServer {
   private clients: Map<string, CustomWebSocket>
 
   constructor(port: number) {
-    this.wss = new WebSocket.Server({ port })
+    this.wss = new WebSocketServer({ port })
     this.clients = new Map()
     this.initialize()
   }
@@ -23,6 +31,13 @@ class VideoProcessingWSServer {
   private initialize() {
     this.wss.on('connection', (ws: CustomWebSocket) => {
       const clientId = Math.random().toString(36).substring(7)
+      
+      // Authenticate WebSocket connection
+      if (!AuthService.authenticateWebSocket(ws)) {
+        ws.close(4001, 'Authentication required')
+        return
+      }
+
       this.clients.set(clientId, ws)
 
       ws.on('message', (message) => {
@@ -47,4 +62,4 @@ class VideoProcessingWSServer {
   }
 }
 
-export const wsServer = new VideoProcessingWSServer(3002) 
+export const wsServer = new VideoProcessingWSServer(3002)

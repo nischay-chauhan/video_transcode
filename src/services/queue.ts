@@ -8,9 +8,13 @@ export const initializeWorker = () => {
     'video-processing',
     async (job) => {
       const { inputPath, outputPath, options } = job.data as VideoProcessingJob
-      
+
+      if (!job.data || !job.id) {
+        throw new Error('Invalid job data')
+      }
+
       try {
-        await VideoProcessor.processVideo(inputPath, outputPath, options)
+        await VideoProcessor.processVideo(inputPath, outputPath, options, job.id)
         return { success: true, outputPath }
       } catch (error) {
         throw new Error(`Video processing failed: ${(error as Error).message || 'Unknown error'}`)

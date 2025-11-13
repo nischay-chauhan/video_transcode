@@ -26,11 +26,11 @@ export const upload = () => {
       const arrayBuffer = await file.arrayBuffer()
       await writeFile(filePath, Buffer.from(arrayBuffer))
 
-      // Attach file info to request
-      c.req.file = {
+      // Instead of attaching to c.req.file, use c.set()
+      c.set('uploadedFile', {
         path: filePath,
         filename: fileName
-      }
+      })
 
       await next()
     } catch (error) {
